@@ -1,6 +1,6 @@
 Puter.js works on any platform with JavaScript support. This includes websites, Puter Apps, Node.js, and Puter Serverless Workers.
 
-## Websites
+## **Websites**
 
 Use Puter.js in your websites to add powerful features like AI, databases, and cloud storage without worrying about infrastructure.
 
@@ -52,11 +52,11 @@ const puter = require("@heyputer/puter.js");
 
 </div>
 
-## Puter Apps
+## **Puter Apps**
 
-Puter Apps are web-based applications that run on [Puter](https://puter.com) desktop environment.
+Puter Apps are web-based applications that run in the [Puter](https://puter.com) web-based operating system.
 
-You can use Puter.js in Puter Apps just as you would on any website. They have full access to all web capabilities, plus the added benefits of Puter desktop, such as:
+You can use Puter.js in Puter Apps just as you would in any website. They have full access to all web capabilities, plus the added benefits of Puter desktop, such as:
 
 - **Automatic authentication** - Users are automatically authenticated in the Puter environment
 - **Inter-app communication** - Interact with other Puter apps programmatically
@@ -70,7 +70,7 @@ You can use Puter.js in Puter Apps just as you would on any website. They have f
 
 The Puter ecosystem hosts over 60,000 live applications, from essential tools like Notepad, File Explorer, Code Editor, and many more specialized applications.
 
-## Node.js
+## **Node.js**
 
 > **Note:** Node.js support is currently in beta.
 
@@ -89,15 +89,8 @@ puter.ai.chat("What color was Napoleon's white horse?").then((response) => {
 });
 ```
 
-## Serverless Workers
+## **Serverless Workers**
 
 [Serverless Workers](/Workers/) let you run HTTP servers and backend APIs.
 
-Think of them as your backend layer that can handle server-side logic and API endpoints. And just like in websites, you can use Puter.js in workers to access AI, cloud storage, key-value stores, and databases.
-
-The difference is where the resources are utilized. Normally with Puter.js, all resources belong to your users; each user has their own storage and databases. Workers give you the flexibility in using resources:
-
-- **Worker context** - Store data in your own storage and databases. Use this for shared application data, server-side logic, and centralized resources that you control.
-- **User context** - Keep data in each user's own storage and databases. This maintains the default [User-Pays model](/user-pays-model/) while still executing logic server-side.
-
-This means you can choose which parts of your app use centralized resources (your storage/database) versus user-specific resources, all from the same codebase.
+Think of them as your serverless backend and API endpoints. Just like in other serverless platforms, you can use Puter.js in workers to access AI, cloud storage, key-value stores, and databases.

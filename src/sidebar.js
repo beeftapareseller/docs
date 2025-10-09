@@ -9,9 +9,9 @@ let sidebar = [
                 path: '/getting-started',
             },
             {
-                title: 'Examples',
-                source: '/examples.md',
-                path: '/examples',
+                title: 'Supported Platforms',
+                source: '/supported-platforms.md',
+                path: '/supported-platforms',
             },
             {
                 title: 'Security and Permissions',
@@ -22,7 +22,12 @@ let sidebar = [
                 title: 'User-Pays Model',
                 source: '/user-pays-model.md',
                 path: '/user-pays-model',
-            }
+            },
+            {
+                title: 'Examples',
+                source: '/examples.md',
+                path: '/examples',
+            },
         ]
     },
     {

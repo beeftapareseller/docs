@@ -143,12 +143,53 @@ function generateSearchUIHTML() {
                     </div>
                     <input type="text" class="search-input" placeholder="Search documentation..." />
                 </div>
-                
+
                 <div class="search-results">
                 </div>
             </div>
         </div>
     `;
+}
+
+function generateTableOfContentsHTML(htmlContent, title) {
+    const headings = [];
+
+    const dom = new JSDOM(htmlContent);
+    const document = dom.window.document;
+
+    const headingElements = document.querySelectorAll('h2, h3');
+
+    headingElements.forEach(element => {
+        const tagName = element.tagName.toLowerCase();
+        const headingLevel = parseInt(tagName.charAt(1));
+        const level = headingLevel - 1;
+        const id = element.getAttribute('id');
+        const text = element.textContent.trim();
+
+        if (id) {
+            headings.push({
+                level,
+                text,
+                slug: id
+            });
+        }
+    });
+
+    let html = '<div class="table-of-contents">';
+    html += '<div class="toc-title">On this page</div>';
+    html += '<nav class="toc-nav">';
+
+    const cleanTitle = removeTags(title);
+    html += `<a href="#" class="toc-link toc-level-1" data-level="1">${cleanTitle}</a>`;
+
+    for (const heading of headings) {
+        html += `<a href="#${heading.slug}" class="toc-link toc-level-${heading.level}" data-level="${heading.level}">${heading.text}</a>`;
+    }
+
+    html += '</nav>';
+    html += '</div>';
+
+    return html;
 }
 
 // Function to process each markdown file
@@ -245,12 +286,12 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
             html += `<div id="progress-bar" style="width: 0%; height: 5px; background-color: #dbdbe3; transition: 0.2s all; z-index: 99999999999;"></div>`
         html += `</div>`;
         html += `<script>hljs.highlightAll();</script>`;
-        html += `<div class="container">`;
-            html += `<div class="row">`;
+        html += `<div style="max-width: 1400px; margin: 0 auto;">`;
+            html += `<div>`;
                 // sidebar toggle button
                 html += `<button class="sidebar-toggle hidden-lg hidden-xl"><div class="sidebar-toggle-button"><span></span><span></span><span></span></div></button>`;
                 // sidebar
-                html += `<div class="col-xl-4 col-lg-4 hidden-md hidden-sm hidden-xs" id="sidebar-wrapper">`;
+                html += `<div class="col-xl-3 col-lg-3 hidden-md hidden-sm hidden-xs" id="sidebar-wrapper">`;
                     html += `<div id="sidebar">`;
                         // html += `<div class="dark-mode-toggle">
                         //             <input type="checkbox" id="darkmode-toggle" class="dark-mode-toggle-checkbox"/>
@@ -302,7 +343,7 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
                     html += `</div>`;
                 html +=`</div>`;
                 // content
-                html += `<div id="docs-content-${page.slug ?? ''}" class="docs-content col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">`;
+                html += `<div id="docs-content-${page.slug ?? ''}" class="docs-content col-xl-7 col-lg-7 col-md-12 col-sm-12 col-xs-12">`;
                     // context menu
                     html += generateMenuHTML();
 
@@ -318,8 +359,10 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
                             </div>
                         </div>`;
                     }
-                    
-                    html += marked.parse(markdown);
+
+                    // Parse markdown once and store it
+                    const parsedHTML = marked.parse(markdown);
+                    html += parsedHTML;
                     
                     // add next and previous buttons
                     html += `<div class="next-prev-buttons">`;
@@ -370,6 +413,13 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
                     html += `</footer>`;
 
                 html += `</div>`;
+
+                const tocHTML = generateTableOfContentsHTML(parsedHTML, page.page_title ?? page.title);
+                html += `<div class="col-xl-2 col-lg-2 hidden-xs hidden-sm hidden-md" id="toc-wrapper">`;
+                    html += tocHTML;
+                html += `</div>`;
+
+
             html += `</div>`;
         html += `</div>`;
 

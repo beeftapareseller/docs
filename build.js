@@ -6,6 +6,7 @@ const redirects = require('./src/redirects');
 const menuItems = require('./src/menu.js');
 const { encode } =  require('html-entities');
 const { JSDOM } = require('jsdom');
+const yaml = require('js-yaml');
 
 const site = "https://docs.puter.com";
 
@@ -192,6 +193,19 @@ function generateTableOfContentsHTML(htmlContent, title) {
     return html;
 }
 
+function parseFrontMatter(fileContent) {
+    const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+    const match = fileContent.match(frontMatterRegex);
+
+    if (match) {
+        const [, frontMatterYaml, content] = match;
+        const frontMatter = yaml.load(frontMatterYaml);
+        return { frontMatter, content };
+    }
+
+    return { frontMatter: {}, content: fileContent };
+}
+
 // Function to process each markdown file
 function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
     const markdown = fs.readFileSync(filePath, 'utf-8');
@@ -208,6 +222,10 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
     const distPlaygroundDir = path.join(rootDir, '..', 'dist', 'playground');
     createDirectoryRecursively(distPlaygroundDir);
     fs.copySync(playgroundDir, distPlaygroundDir);
+
+    // Parse markdown once and store it
+    const { frontMatter , content } = parseFrontMatter(markdown);
+    const parsedHTML = marked.parse(content);
 
     // create the HTML file
     html += `<head>`;
@@ -228,6 +246,9 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
         // Description
         if(isIndex){
             html += `<meta name="description" content="Puter.js: Free, Serverless, Cloud and AI Powered by Puter.">`;
+        }
+        else if (frontMatter.description) {
+            html += `<meta name="description" content="${frontMatter.description}">`;
         }
         // Social Media
         html += `<meta property="og:title" content="${removeTags(page.title_tag ?? page.title)}">`;
@@ -360,8 +381,6 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
                         </div>`;
                     }
 
-                    // Parse markdown once and store it
-                    const parsedHTML = marked.parse(markdown);
                     html += parsedHTML;
                     
                     // add next and previous buttons
@@ -434,15 +453,13 @@ function generateDocsHTML(filePath, rootDir, page, isIndex = false) {
     const newDir = path.join(rootDir, '..', 'dist', relativeDir, path.basename(filePath, '.md'));
 
     // view page as markdown
-    const markdownWithTitle = `# ${page.title_tag ?? page.title}\n\n${markdown}`;
-
     if(isIndex) {
         fs.writeFileSync(path.join(rootDir, '..', 'dist', 'index.html'), html);
-        fs.writeFileSync(path.join(rootDir, '..', 'dist', 'index.md'), markdownWithTitle);
+        fs.writeFileSync(path.join(rootDir, '..', 'dist', 'index.md'), markdown);
     } else {
         createDirectoryRecursively(newDir);
         fs.writeFileSync(path.join(newDir, 'index.html'), html);
-        fs.writeFileSync(path.join(newDir, 'index.md'), markdownWithTitle);
+        fs.writeFileSync(path.join(newDir, 'index.md'), markdown);
     }
 
     // Show an error if any playground examples referred to do not exist

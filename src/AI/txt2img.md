@@ -21,8 +21,8 @@ A boolean indicating whether you want to use the test API. Defaults to `false`. 
 
 #### `options` (Object) (Optional)
 An options object with the following properties:
-- `model` (String) (Optional) - The AI model to use for image generation, it can be `gpt-image-1`, `gemini-2.5-flash-image-preview` (also known as Nano Banana), or `dall-e-3`. Defaults to `gpt-image-1`.
-- `quality` (String) (Optional) - The quality of the generated image. For `gpt-image-1`, it can be `high`, `medium` or `low`. Defaults to `low`. There is no quality setting for `gemini-2.5-flash-image-preview`. For `dall-e-3`, it can be `hd` or `standard`. Defaults to `standard`.
+- `model` (String) (Optional) - The AI model to use for image generation, it can be `gpt-image-1`, `gpt-image-1-mini`, `gemini-2.5-flash-image-preview` (also known as Nano Banana), or `dall-e-3`. Defaults to `gpt-image-1-mini`.
+- `quality` (String) (Optional) - The quality of the generated image. For `gpt-image-1` and `gpt-image-1-mini`, it can be `high`, `medium` or `low`. Defaults to `low`. There is no quality setting for `gemini-2.5-flash-image-preview`. For `dall-e-3`, it can be `hd` or `standard`. Defaults to `standard`.
 - `input_image` (String) (Optional) (Only works with `gemini-2.5-flash-image-preview`) - Base64 encoded input image for image-to-image generation.
 - `input_image_mime_type` (String) (Optional) (Only if `input_image` is set) - The MIME type of the input image. Could be `image/png`, `image/jpeg`, `image/jpg`, or `image/webp`.
 
@@ -54,8 +54,8 @@ A `Promise` that will resolve to an image data URL when the image has been gener
 <body>
     <script src="https://js.puter.com/v2/"></script>
     <script>
-        // Generate am image of a cat playing piano using a specific model and quality set to low
-        puter.ai.txt2img("a cat playing piano", { 
+        // Generate an image of a cat playing piano using a specific model and quality set to low
+        puter.ai.txt2img("a cat playing the piano", { 
             model: "gpt-image-1", 
             quality: "low" 
         }).then((image)=>{
